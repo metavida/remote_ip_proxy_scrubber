@@ -32,3 +32,8 @@ build/
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
+.ruby-version
+.ruby-gemset
+
+# This is a gem, so don't commit the Gemfile.lock
+/Gemfile.lock
