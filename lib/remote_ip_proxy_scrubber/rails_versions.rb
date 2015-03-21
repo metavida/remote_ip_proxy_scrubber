@@ -3,6 +3,32 @@ require 'remote_ip_proxy_scrubber/ip_list'
 module RemoteIpProxyScrubber
   class RailsVersions
     class << self
+      # Supports Rails >= 4.2.0
+      #
+      # Available options
+      # * :include_trusted_proxies: A boolean. Default true
+      #
+      # In these versions of Rails
+      # custom_proxies can be an Array of String, IPAddr, or Regexp
+      # which will replace TRUSTED_PROXIES
+      # or a single String, IPAddr, or Regexp
+      # which will be used in addition to TRUSTED_PROXIES
+      #
+      # To keep things simple, this method will always return an Array of items
+      # and if `:include_trusted_proxies == true` it will add in TRUSTED_PROXIES
+      #
+      # * https://github.com/rails/rails/blob/v4.2.0/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L52-L59
+      def rails_4_2(*given_ips)
+        options = given_ips.extract_options!
+        options.reverse_merge!(:include_trusted_proxies=>true)
+
+        if options[:include_trusted_proxies]
+          given_ips + ::ActionDispatch::RemoteIp::TRUSTED_PROXIES
+        else
+          given_ips
+        end
+      end
+
       # Supports Rails 4.0.x -> 4.1.x
       #
       # Available options
@@ -33,31 +59,6 @@ module RemoteIpProxyScrubber
         end
       end
 
-      # Supports Rails >= 4.2.0
-      #
-      # Available options
-      # * :include_trusted_proxies: A boolean. Default true
-      #
-      # In these versions of Rails
-      # custom_proxies can be an Array of String, IPAddr, or Regexp
-      # which will replace TRUSTED_PROXIES
-      # or a single String, IPAddr, or Regexp
-      # which will be used in addition to TRUSTED_PROXIES
-      #
-      # To keep things simple, this method will always return an Array of items
-      # and if `:include_trusted_proxies == true` it will add in TRUSTED_PROXIES
-      #
-      # * https://github.com/rails/rails/blob/v4.2.0/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L52-L59
-      def rails_4_2(*given_ips)
-        options = given_ips.extract_options!
-        options.reverse_merge!(:include_trusted_proxies=>true)
-
-        if options[:include_trusted_proxies]
-          given_ips + ::ActionDispatch::RemoteIp::TRUSTED_PROXIES
-        else
-          given_ips
-        end
-      end
     end
   end
 end
