@@ -23,6 +23,8 @@ module RemoteIpProxyScrubber
       RemoteIpProxyScrubber::RailsVersions.rails_4_2(*given_ips)
     elsif rails_version >= Gem::Version.new('4.0.0')
       RemoteIpProxyScrubber::RailsVersions.rails_4_0(*given_ips)
+    elsif rails_version >= Gem::Version.new('3.2.0')
+      RemoteIpProxyScrubber::RailsVersions.rails_3_2(*given_ips)
     else
       fail "Sorry, this gem doesn't know how to handle Rails #{rails_version} yet"
     end
