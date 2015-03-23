@@ -93,7 +93,7 @@ module RemoteIpProxyScrubber
 
         final_regexps = []
         final_regexps += given_regexps unless given_regexps.empty?
-        final_regexps += IPList.new(*given_ips).to_regexp unless given_ips.empty?
+        final_regexps << IPList.new(*given_ips).to_regexp unless given_ips.empty?
 
         if final_regexps.empty?
           no_proxies_warning

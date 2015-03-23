@@ -51,6 +51,7 @@ describe RemoteIpProxyScrubber::RailsVersions do
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
         redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, ['127.0.0.1']) do
+          expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn)
           expect(RemoteIpProxyScrubber::RailsVersions.rails_4_2(*args)).to be_a(Array)
         end
       end
@@ -63,8 +64,26 @@ describe RemoteIpProxyScrubber::RailsVersions do
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
         redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, /127.0.0.1/) do
+          expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn)
           expect(RemoteIpProxyScrubber::RailsVersions.rails_4_0(*args)).to be_a(Regexp)
         end
+      end
+
+    end
+  end
+
+
+  describe ".rails_3" do
+    # Test every possible variation of arguments
+    input_argmuent_variations.each do |args|
+      it "should return an Array, given #{args.inspect}" do
+        if args.last.is_a?(Hash) && args.last[:include_trusted_proxies] == false
+          expect(RemoteIpProxyScrubber::RailsVersions).to receive(:warn).with(/always includes TRUSTED_PROXIES/)
+        else
+          expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn)
+        end
+
+        expect(RemoteIpProxyScrubber::RailsVersions.rails_3(*args)).to be_a(Regexp)
       end
 
     end
