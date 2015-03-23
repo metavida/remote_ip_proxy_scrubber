@@ -69,7 +69,7 @@ module RemoteIpProxyScrubber
         end
       end
 
-      # Supports Rails 3.2.x
+      # Supports Rails 3.x
       #
       # Fixed options
       # * :include_trusted_proxies: Only supports true
@@ -80,9 +80,11 @@ module RemoteIpProxyScrubber
       #
       # To keep things simple, this method will always return a Regexp
       #
+      # * https://github.com/rails/rails/blob/v3.0.0/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L42
+      # * https://github.com/rails/rails/blob/v3.1.12/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L42
       # * https://github.com/rails/rails/blob/v3.2.0/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L18-L27
-      # * https://github.com/rails/rails/blob/v3.2.12/actionpack/lib/action_dispatch/middleware/remote_ip.rb#L18-L27
-      def rails_3_2(*given_ips)
+      # * https://github.com/rails/rails/blob/v3.2.21/actionpack/lib/action_dispatch/middleware/remote_ip.rb
+      def rails_3(*given_ips)
         options = given_ips.extract_options!
         options.reverse_merge!(:include_trusted_proxies=>true)
         warn_unless_include_trusted_proxies(options)
