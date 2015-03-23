@@ -94,3 +94,37 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+module SpecHelper
+  # Sets $VERBOSE to nil for the duration of the block and back to its original value afterwards.
+  #
+  #   silence_warnings do
+  #     value = noisy_call # no warning voiced
+  #   end
+  #
+  #   noisy_call # warning voiced
+  def silence_warnings
+    old_verbose, $VERBOSE = $VERBOSE, nil
+    yield
+  ensure
+    $VERBOSE = old_verbose
+  end
+
+  # Redefine a constant within this block. For Example:
+  #   class Apache
+  #     CONF_DIR = '/etc/httpd/conf'
+  #   end
+  #
+  #   puts Apache::CONF_DIR #=> '/etc/httpd/conf'
+  #   redefine_const(Apache, :CONF_DIR, '/apache/conf') do
+  #     puts Apache::CONF_DIR #=> '/apache/conf'
+  #   end
+  #   puts Apache::CONF_DIR #=> '/etc/httpd/conf'
+  def redefine_const(klass, name, value)
+    old_value = klass.const_get(name) rescue nil
+    silence_warnings { klass.const_set(name, value) }
+    yield
+  ensure
+    silence_warnings { klass.const_set(name, old_value) }
+  end
+end

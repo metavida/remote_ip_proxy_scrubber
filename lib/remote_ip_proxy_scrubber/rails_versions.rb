@@ -58,7 +58,7 @@ module RemoteIpProxyScrubber
 
         final_regexps = []
         final_regexps += given_regexps unless given_regexps.empty?
-        final_regexps += IPList.new(*given_ips).to_regexp unless given_ips.empty?
+        final_regexps << IPList.new(*given_ips).to_regexp unless given_ips.empty?
         final_regexps << ::ActionDispatch::RemoteIp::TRUSTED_PROXIES if options[:include_trusted_proxies]
 
         if final_regexps.empty?

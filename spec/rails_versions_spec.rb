@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber'
+include SpecHelper
 
 # Define a few items that we'll stub out during out tests
 module ActionDispatch
@@ -46,13 +47,24 @@ end
 describe RemoteIpProxyScrubber::RailsVersions do
 
   describe ".rails_4_2" do
-    # Setup
-    ::ActionDispatch::RemoteIp::TRUSTED_PROXIES = ['127.0.0.1']
-
     # Test every possible variation of arguments
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
-        expect(RemoteIpProxyScrubber::RailsVersions.rails_4_2(*args)).to be_a(Array)
+        redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, ['127.0.0.1']) do
+          expect(RemoteIpProxyScrubber::RailsVersions.rails_4_2(*args)).to be_a(Array)
+        end
+      end
+
+    end
+  end
+
+  describe ".rails_4_0" do
+    # Test every possible variation of arguments
+    input_argmuent_variations.each do |args|
+      it "should return an Array, given #{args.inspect}" do
+        redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, /127.0.0.1/) do
+          expect(RemoteIpProxyScrubber::RailsVersions.rails_4_0(*args)).to be_a(Regexp)
+        end
       end
 
     end
