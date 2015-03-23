@@ -52,7 +52,7 @@ describe RemoteIpProxyScrubber::RailsVersions do
     # Test every possible variation of arguments
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
-        expect(RemoteIpProxyScrubber::RailsVersions.rails_4_2(args)).to be_a(Array)
+        expect(RemoteIpProxyScrubber::RailsVersions.rails_4_2(*args)).to be_a(Array)
       end
 
     end
