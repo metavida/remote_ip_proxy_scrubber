@@ -6,9 +6,6 @@ class Rails
     raise 'this method must be stubbed in our tests'
   end
 end
-module ActionDispatch
-  class RemoteIp; end
-end
 
 # Backport the Rails methods we need for testing
 class Hash
