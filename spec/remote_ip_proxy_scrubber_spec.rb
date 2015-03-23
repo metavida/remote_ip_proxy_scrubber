@@ -24,18 +24,53 @@ end
 
 describe RemoteIpProxyScrubber do
   describe ".config" do
-    it "should return a Regexp for Rails 4.0.0" do
-      expect(Rails).to receive(:version) { '4.0.0' }
-      ActionDispatch::RemoteIp::TRUSTED_PROXIES = /trusted/
+    rails_versions_to_test = {
+      :rails_4_2  => %w{4.2.0 4.2.21 4.3.3 5.0.0},
+      :rails_4_0  => %w{4.0.0 4.1.10 4.1.42},
+      :rails_3    => %w{3.0.0 3.1.4 3.2.21 3.99.999},
+    }
 
-      expect(RemoteIpProxyScrubber.config("8.8.8.8")).to be_a(Regexp)
+    rails_versions_to_test.each do |expected_method, current_rails_versions|
+      current_rails_versions.each do |rails_version|
+        it "should call RailsVersions.#{expected_method} for Rails #{rails_version}" do
+          # Given
+          expect(Rails).to receive(:version) { rails_version }
+          ips = ['random values', 1.0]
+
+          # Then
+          expect(RemoteIpProxyScrubber::RailsVersions).to receive(expected_method) { ips }
+
+          # When
+          RemoteIpProxyScrubber.config(ips)
+        end
+      end
     end
 
-    it "should return an Array for Rails 4.2.0" do
-      expect(Rails).to receive(:version) { '4.2.0' }
-      ActionDispatch::RemoteIp::TRUSTED_PROXIES = ['trusted']
+    rails_versions_to_fail = %w{1.0.0 1.2.6 2.0.0 2.99.99 not.a.version}
 
-      expect(RemoteIpProxyScrubber.config("8.8.8.8")).to be_a(Array)
+    rails_versions_to_fail.each do |rails_version|
+      it "should fail for Rails #{rails_version}" do
+        # Given
+        expect(Rails).to receive(:version) { rails_version }
+        ips = ['random values', 1.0]
+
+        # Then/When
+        expect {
+          RemoteIpProxyScrubber.config(ips)
+        }.to raise_error
+      end
     end
+
+    it "should fail if there is no Rails version" do
+      # Given
+      expect(Rails).to receive(:version) { fail NoMethodError.new("No Rails") }
+      ips = ['random values', 1.0]
+
+      # Then/When
+      expect {
+        RemoteIpProxyScrubber.config(ips)
+      }.to raise_error
+    end
+
   end
 end
