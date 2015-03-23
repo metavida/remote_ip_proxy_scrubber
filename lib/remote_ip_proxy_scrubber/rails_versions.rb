@@ -96,7 +96,6 @@ module RemoteIpProxyScrubber
         final_regexps << IPList.new(*given_ips).to_regexp unless given_ips.empty?
 
         if final_regexps.empty?
-          no_proxies_warning
           nil
         else
           Regexp.union(*final_regexps)
