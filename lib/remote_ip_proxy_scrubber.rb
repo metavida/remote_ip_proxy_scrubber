@@ -20,10 +20,33 @@ module RemoteIpProxyScrubber
     elsif rails_version >= Gem::Version.new('3.0.0')
       RemoteIpProxyScrubber::RailsVersions.rails_3(*given_ips)
     else
-      fail "Sorry, this gem doesn't know how to handle Rails #{rails_version} yet"
+      fail "Sorry, this gem doesn't know how to generate a trusted_proxies config value for Rails #{rails_version} yet."
     end
   end
   module_function :config
+
+  # Returns a Class to be used a rack middleware,
+  # replacing the existing `Rails::Rack::Logger`.
+  #
+  #     config.middleware.insert_before(Rails::Rack::Logger, RemoteIpProxyScrubber.patched_logger)
+  #     config.middleware.delete(Rails::Rack::Logger)
+  def patched_logger
+    rails_version = self.rails_version
+    if    rails_version >= Gem::Version.new('4.0.0')
+      RemoteIpProxyScrubber::Rails4::RemoteIPLogger
+    elsif rails_version >= Gem::Version.new('3.2.9')
+      RemoteIpProxyScrubber::Rails3_2_9::RemoteIPLogger
+    elsif rails_version >= Gem::Version.new('3.2.0')
+      RemoteIpProxyScrubber::Rails3_2_0::RemoteIPLogger
+    elsif rails_version >= Gem::Version.new('3.0.6')
+      RemoteIpProxyScrubber::Rails3_1::RemoteIPLogger
+    elsif rails_version >= Gem::Version.new('3.0.0')
+      RemoteIpProxyScrubber::Rails3_0::RemoteIPLogger
+    else
+      fail "Sorry, this gem doesn't know how to monkey-patch the Rails logger for Rails #{rails_version} yet."
+    end
+  end
+  module_function :patched_logger
 
   def rails_version
     rails_version = Rails.version rescue nil
