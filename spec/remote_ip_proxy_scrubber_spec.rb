@@ -23,6 +23,43 @@ end
 
 describe RemoteIpProxyScrubber do
   describe ".config" do
+    it "should accept a list of arguments" do
+      # Given
+      expect(Rails).to receive(:version) { '4.0.0' }
+      ips = ['random values', 1.0]
+
+      # Then
+      expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:rails_4_0).with(*ips)
+
+      # When
+      RemoteIpProxyScrubber.config(*ips)
+    end
+
+    it "should accept an Array of arguments" do
+      # Given
+      expect(Rails).to receive(:version) { '4.0.0' }
+      ips = ['random values', 1.0]
+
+      # Then
+      expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:rails_4_0).with(*ips)
+
+      # When
+      RemoteIpProxyScrubber.config(ips)
+    end
+
+    it "should accept crazy Arrays of arguments" do
+      # Given
+      expect(Rails).to receive(:version) { '4.0.0' }
+      given_ips     = [['random values'], 1.0, [3, ['deep']]]
+      expected_ips  = ['random values', 1.0, 3, 'deep']
+
+      # Then
+      expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:rails_4_0).with(*expected_ips)
+
+      # When
+      RemoteIpProxyScrubber.config(given_ips)
+    end
+
     rails_versions_to_test = {
       :rails_4_2  => %w{4.2.0 4.2.21 4.3.3 5.0.0},
       :rails_4_0  => %w{4.0.0 4.1.10 4.1.42},
@@ -37,7 +74,7 @@ describe RemoteIpProxyScrubber do
           ips = ['random values', 1.0]
 
           # Then
-          expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(expected_method) { ips }
+          expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(expected_method).with(*ips)
 
           # When
           RemoteIpProxyScrubber.config(ips)

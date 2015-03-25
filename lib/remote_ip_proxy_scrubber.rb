@@ -13,6 +13,8 @@ module RemoteIpProxyScrubber
   def config(*given_ips)
     require 'remote_ip_proxy_scrubber/trusted_proxy_values'
 
+    given_ips = given_ips.flatten
+
     rails_version = self.rails_version
     if    rails_version >= Gem::Version.new('4.2.0')
       RemoteIpProxyScrubber::TrustedProxyValues.rails_4_2(*given_ips)
