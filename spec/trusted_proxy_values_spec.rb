@@ -44,24 +44,24 @@ def input_argmuent_variations
   @variations
 end
 
-describe RemoteIpProxyScrubber::RailsVersions do
+describe RemoteIpProxyScrubber::TrustedProxyValues do
 
   describe ".rails_4_2" do
     # Test every possible variation of arguments
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
         redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, ['127.0.0.1']) do
-          expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn)
-          expect(RemoteIpProxyScrubber::RailsVersions.rails_4_2(*args)).to be_a(Array)
+          expect(RemoteIpProxyScrubber::TrustedProxyValues).to_not receive(:warn)
+          expect(RemoteIpProxyScrubber::TrustedProxyValues.rails_4_2(*args)).to be_a(Array)
         end
       end
     end
 
     it "should warn of fallback behavior if no IPs are given" do
       redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, ['127.0.0.1']) do
-        expect(RemoteIpProxyScrubber::RailsVersions).to receive(:warn).with(/No proxies were specified/)
+        expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:warn).with(/No proxies were specified/)
         expect(
-          RemoteIpProxyScrubber::RailsVersions.rails_4_2(:include_trusted_proxies=>false)
+          RemoteIpProxyScrubber::TrustedProxyValues.rails_4_2(:include_trusted_proxies=>false)
         ).to be_nil
       end
     end
@@ -72,17 +72,17 @@ describe RemoteIpProxyScrubber::RailsVersions do
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
         redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, /127.0.0.1/) do
-          expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn)
-          expect(RemoteIpProxyScrubber::RailsVersions.rails_4_0(*args)).to be_a(Regexp)
+          expect(RemoteIpProxyScrubber::TrustedProxyValues).to_not receive(:warn)
+          expect(RemoteIpProxyScrubber::TrustedProxyValues.rails_4_0(*args)).to be_a(Regexp)
         end
       end
     end
 
     it "should warn of fallback behavior if no IPs are given" do
       redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, ['127.0.0.1']) do
-        expect(RemoteIpProxyScrubber::RailsVersions).to receive(:warn).with(/No proxies were specified/)
+        expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:warn).with(/No proxies were specified/)
         expect(
-          RemoteIpProxyScrubber::RailsVersions.rails_4_0(:include_trusted_proxies=>false)
+          RemoteIpProxyScrubber::TrustedProxyValues.rails_4_0(:include_trusted_proxies=>false)
         ).to be_nil
       end
     end
@@ -94,12 +94,12 @@ describe RemoteIpProxyScrubber::RailsVersions do
     input_argmuent_variations.each do |args|
       it "should return an Array, given #{args.inspect}" do
         if args.last.is_a?(Hash) && args.last[:include_trusted_proxies] == false
-          expect(RemoteIpProxyScrubber::RailsVersions).to receive(:warn).with(/always includes TRUSTED_PROXIES/)
+          expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:warn).with(/always includes TRUSTED_PROXIES/)
         else
-          expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn)
+          expect(RemoteIpProxyScrubber::TrustedProxyValues).to_not receive(:warn)
         end
 
-        expect(RemoteIpProxyScrubber::RailsVersions.rails_3(*args)).to be_a(Regexp)
+        expect(RemoteIpProxyScrubber::TrustedProxyValues.rails_3(*args)).to be_a(Regexp)
       end
     end
 
@@ -107,10 +107,10 @@ describe RemoteIpProxyScrubber::RailsVersions do
       # ...because there's no point in warning that TRUSTED_PROXIES will be used
       #    because TRUSTED_PROXIES is *always* used in rails_3
       redefine_const(::ActionDispatch::RemoteIp, :TRUSTED_PROXIES, ['127.0.0.1']) do
-        expect(RemoteIpProxyScrubber::RailsVersions).to receive(:warn).with(/always includes TRUSTED_PROXIES/)
-        expect(RemoteIpProxyScrubber::RailsVersions).to_not receive(:warn).with(/No proxies were specified/)
+        expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:warn).with(/always includes TRUSTED_PROXIES/)
+        expect(RemoteIpProxyScrubber::TrustedProxyValues).to_not receive(:warn).with(/No proxies were specified/)
         expect(
-          RemoteIpProxyScrubber::RailsVersions.rails_3(:include_trusted_proxies=>false)
+          RemoteIpProxyScrubber::TrustedProxyValues.rails_3(:include_trusted_proxies=>false)
         ).to be_nil
       end
     end

@@ -29,13 +29,13 @@ describe RemoteIpProxyScrubber do
 
     rails_versions_to_test.each do |expected_method, current_rails_versions|
       current_rails_versions.each do |rails_version|
-        it "should call RailsVersions.#{expected_method} for Rails #{rails_version}" do
+        it "should call TrustedProxyValues.#{expected_method} for Rails #{rails_version}" do
           # Given
           expect(Rails).to receive(:version) { rails_version }
           ips = ['random values', 1.0]
 
           # Then
-          expect(RemoteIpProxyScrubber::RailsVersions).to receive(expected_method) { ips }
+          expect(RemoteIpProxyScrubber::TrustedProxyValues).to receive(expected_method) { ips }
 
           # When
           RemoteIpProxyScrubber.config(ips)

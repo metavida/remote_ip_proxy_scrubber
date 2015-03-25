@@ -1,7 +1,7 @@
 require 'remote_ip_proxy_scrubber/ip_list'
 
 module RemoteIpProxyScrubber
-  class RailsVersions
+  class TrustedProxyValues
     class << self
       # Supports Rails >= 4.2.0
       #

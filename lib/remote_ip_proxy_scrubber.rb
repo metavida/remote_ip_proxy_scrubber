@@ -1,7 +1,8 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'remote_ip_proxy_scrubber/version'
-require 'remote_ip_proxy_scrubber/rails_versions'
+require 'remote_ip_proxy_scrubber/trusted_proxy_values'
+require 'remote_ip_proxy_scrubber/remote_ip_logger'
 
 module RemoteIpProxyScrubber
   # Add the following to config/application.rb or conifg/environments/*
@@ -14,11 +15,11 @@ module RemoteIpProxyScrubber
   def config(*given_ips)
     rails_version = self.rails_version
     if    rails_version >= Gem::Version.new('4.2.0')
-      RemoteIpProxyScrubber::RailsVersions.rails_4_2(*given_ips)
+      RemoteIpProxyScrubber::TrustedProxyValues.rails_4_2(*given_ips)
     elsif rails_version >= Gem::Version.new('4.0.0')
-      RemoteIpProxyScrubber::RailsVersions.rails_4_0(*given_ips)
+      RemoteIpProxyScrubber::TrustedProxyValues.rails_4_0(*given_ips)
     elsif rails_version >= Gem::Version.new('3.0.0')
-      RemoteIpProxyScrubber::RailsVersions.rails_3(*given_ips)
+      RemoteIpProxyScrubber::TrustedProxyValues.rails_3(*given_ips)
     else
       fail "Sorry, this gem doesn't know how to generate a trusted_proxies config value for Rails #{rails_version} yet."
     end
