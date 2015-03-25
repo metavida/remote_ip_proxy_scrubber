@@ -70,4 +70,41 @@ describe RemoteIpProxyScrubber do
     end
 
   end
+
+  describe ".rails_version" do
+    it "should prefer Rails.version if available" do
+      # Given
+      expected_version    = Gem::Version.new('0.0.1')
+      unexpected_version  = Gem::Version.new('0.0.2')
+      expect(Rails).to receive(:version) { expected_version.to_s }
+      redefine_const(Object, :RAILS_GEM_VERSION, unexpected_version.to_s) do
+
+        # Then
+        expect(RemoteIpProxyScrubber.rails_version).to be == expected_version
+      end
+    end
+
+    it "should use RAILS_VERSION if Rails.version isn't available" do
+      # Given
+      expected_version    = Gem::Version.new('0.0.1')
+      expect(Rails).to receive(:version) { fail NoMethodError.new("No Rails") }
+      redefine_const(Object, :RAILS_GEM_VERSION, expected_version.to_s) do
+
+        # Then
+        expect(RemoteIpProxyScrubber.rails_version).to be == expected_version
+      end
+    end
+
+    it "should fail if it can't figure out the version" do
+      # Given
+      expect(Rails).to receive(:version) { nil }
+      redefine_const(Object, :RAILS_GEM_VERSION, nil) do
+
+        # Then
+        expect {
+          RemoteIpProxyScrubber.rails_version
+        }.to raise_error
+      end
+    end
+  end
 end
