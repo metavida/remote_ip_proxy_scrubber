@@ -22,7 +22,7 @@ module RemoteIpProxyScrubber
   # * https://github.com/rails/rails/blob/v3.2.21/railties/lib/rails/rack/logger.rb#L37-L44
   # * https://github.com/rails/rails/blob/v3.2.9/railties/lib/rails/rack/logger.rb#L37-L44
   module Rails3_2_9
-    class RemoteIPLogger < RemoteIpProxyScrubber::Rails4:RemoteIPLogger
+    class RemoteIPLogger < ::RemoteIpProxyScrubber::Rails4::RemoteIPLogger
     end
   end
 

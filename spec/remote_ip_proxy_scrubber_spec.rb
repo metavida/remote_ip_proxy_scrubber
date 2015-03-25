@@ -5,6 +5,8 @@ class Rails
   def self.version
     raise 'this method must be stubbed in our tests'
   end
+  class Rack
+  end
 end
 
 # Backport the Rails methods we need for testing
@@ -66,6 +68,55 @@ describe RemoteIpProxyScrubber do
       # Then/When
       expect {
         RemoteIpProxyScrubber.config(ips)
+      }.to raise_error
+    end
+
+  end
+
+  describe ".patched_logger" do
+    rails_versions_to_test = {
+      :Rails4       => %w{4.0.0 4.1.10 4.3.3 5.0.0},
+      :Rails3_2_9   => %w{3.2.9 3.2.29 3.99.999},
+      :Rails3_2_0   => %w{3.2.0 3.2.8},
+      :Rails3_1     => %w{3.0.6 3.0.999 3.1.0 3.1.12 3.1.999},
+      :Rails3_0     => %w{3.0.0 3.0.5},
+    }
+
+    rails_versions_to_test.each do |expected_class, current_rails_versions|
+      expected_class_str = "RemoteIpProxyScrubber::#{expected_class}::RemoteIPLogger"
+      current_rails_versions.each do |rails_version|
+        it "should return #{expected_class_str} for Rails #{rails_version}" do
+          # Given
+          expect(Rails).to receive(:version) { rails_version }
+
+          # Then
+          expect(RemoteIpProxyScrubber.patched_logger).to \
+            be == Kernel.const_get(expected_class_str)
+        end
+      end
+    end
+
+    rails_versions_to_fail = %w{1.0.0 1.2.6 2.0.0 2.99.99 not.a.version}
+
+    rails_versions_to_fail.each do |rails_version|
+      it "should fail for Rails #{rails_version}" do
+        # Given
+        expect(Rails).to receive(:version) { rails_version }
+
+        # Then/When
+        expect {
+          RemoteIpProxyScrubber.patched_logger
+        }.to raise_error
+      end
+    end
+
+    it "should fail if there is no Rails version" do
+      # Given
+      expect(Rails).to receive(:version) { fail NoMethodError.new("No Rails") }
+
+      # Then/When
+      expect {
+        RemoteIpProxyScrubber.patched_logger
       }.to raise_error
     end
 
