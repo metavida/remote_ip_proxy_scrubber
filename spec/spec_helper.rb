@@ -128,3 +128,15 @@ module SpecHelper
     silence_warnings { klass.const_set(name, old_value) }
   end
 end
+
+class String
+  if RUBY_VERSION >= '2.0.0'
+    def constantize
+      Kernel.const_get(self)
+    end
+  else
+    def constantize
+      Object.module_eval("::#{self}", __FILE__, __LINE__)
+    end
+  end
+end

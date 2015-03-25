@@ -1,11 +1,15 @@
 require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber'
+require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber/trusted_proxy_values'
+include SpecHelper
 
 # Define a few items that we'll stub out during out tests
 class Rails
   def self.version
     raise 'this method must be stubbed in our tests'
   end
-  class Rack
+  module Rack
+    class Logger
+    end
   end
 end
 
@@ -23,6 +27,18 @@ end
 
 describe RemoteIpProxyScrubber do
   describe ".config" do
+    # BEGIN rspec HACKY-FIX
+    # When the test suite is run with Ruby 1.8.7 or 1.9.3
+    # the first time we use mocha expectations here they always fail.
+    # It's very odd & unexpected! But whatever, this seems to fix rspec.
+    it "HACKY-FIX: convince rspec not to break oddly in Ruby < 2.0" do
+      expect(Rails).to receive(:version) { '4.0.0' }
+      allow(RemoteIpProxyScrubber::TrustedProxyValues).to receive(:rails_4_0)
+      RemoteIpProxyScrubber.config(nil) rescue nil
+    end
+    # END rspec HACKY-FIX
+
+
     it "should accept a list of arguments" do
       # Given
       expect(Rails).to receive(:version) { '4.0.0' }
@@ -128,7 +144,7 @@ describe RemoteIpProxyScrubber do
 
           # Then
           expect(RemoteIpProxyScrubber.patched_logger).to \
-            be == Kernel.const_get(expected_class_str)
+            be == expected_class_str.constantize
         end
       end
     end
