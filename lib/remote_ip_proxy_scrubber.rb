@@ -1,8 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'remote_ip_proxy_scrubber/version'
-require 'remote_ip_proxy_scrubber/trusted_proxy_values'
-require 'remote_ip_proxy_scrubber/remote_ip_logger'
 
 module RemoteIpProxyScrubber
   # Add the following to config/application.rb or conifg/environments/*
@@ -13,6 +11,8 @@ module RemoteIpProxyScrubber
   #       "17.0.0.0/8",      # Apple
   #     ])
   def config(*given_ips)
+    require 'remote_ip_proxy_scrubber/trusted_proxy_values'
+
     rails_version = self.rails_version
     if    rails_version >= Gem::Version.new('4.2.0')
       RemoteIpProxyScrubber::TrustedProxyValues.rails_4_2(*given_ips)
@@ -32,6 +32,8 @@ module RemoteIpProxyScrubber
   #     config.middleware.insert_before(Rails::Rack::Logger, RemoteIpProxyScrubber.patched_logger)
   #     config.middleware.delete(Rails::Rack::Logger)
   def patched_logger
+    require 'remote_ip_proxy_scrubber/remote_ip_logger'
+
     rails_version = self.rails_version
     if    rails_version >= Gem::Version.new('4.0.0')
       RemoteIpProxyScrubber::Rails4::RemoteIPLogger

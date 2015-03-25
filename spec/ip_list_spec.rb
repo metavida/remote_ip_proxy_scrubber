@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber'
+require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber/ip_list'
 
 describe RemoteIpProxyScrubber::IPList do
 

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber'
+require File.dirname(__FILE__) + '/../lib/remote_ip_proxy_scrubber/trusted_proxy_values'
 include SpecHelper
 
 # Define a few items that we'll stub out during out tests
