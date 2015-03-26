@@ -24,7 +24,7 @@ Without this gem, calls to `request.remote_ip` from your Rails app will return t
 ```ruby
 # Add the following to config/application.rb or conifg/environments/*.rb
 
-config.action_dispatch.trusted_proxies = RemoteIpProxyScrubber.config([
+config.middleware.insert_before(Rails::Rack::Logger, RemoteIpProxyScrubber.filter_middleware, [
   "17.0.0.4/30",
   "17.17.0.8/30",
 ])
