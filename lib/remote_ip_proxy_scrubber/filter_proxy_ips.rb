@@ -24,9 +24,12 @@ module RemoteIpProxyScrubber
       end
 
       def call(env)
+        @env = env
+
         ips = ips_from(X_FORWARDED_FOR)
-        env[X_FORWARDED_FOR] = filter_proxies(ips)
-        @app.call(env)
+        @env[X_FORWARDED_FOR] = filter_proxies(ips).join(', ')
+
+        @app.call(@env)
       end
 
       protected
