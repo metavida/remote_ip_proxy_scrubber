@@ -1,4 +1,4 @@
-require 'ip_addr'
+require 'ipaddr'
 
 module RemoteIpProxyScrubber
   module Rails4
