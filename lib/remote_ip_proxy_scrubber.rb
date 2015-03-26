@@ -28,6 +28,13 @@ module RemoteIpProxyScrubber
   end
   module_function :config
 
+  def filter_middleware
+    require 'remote_ip_proxy_scrubber/filter_proxy_ips'
+
+    RemoteIpProxyScrubber::Rails4::FilterProxyIPs
+  end
+  module_function :filter_middleware
+
   # Returns a Class to be used a rack middleware,
   # replacing the existing `Rails::Rack::Logger`.
   #
