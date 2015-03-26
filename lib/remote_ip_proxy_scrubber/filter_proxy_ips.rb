@@ -5,6 +5,8 @@ module RemoteIpProxyScrubber
     class FilterProxyIPs
       X_FORWARDED_FOR = 'HTTP_X_FORWARDED_FOR'
 
+      attr_reader :proxies
+
       def initialize(app, *proxy_matches)
         @app = app
 
