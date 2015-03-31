@@ -1,3 +1,4 @@
+[![Gem Version](https://badge.fury.io/rb/remote_ip_proxy_scrubber.svg)](http://badge.fury.io/rb/remote_ip_proxy_scrubber)
 [![Build Status](https://travis-ci.org/metavida/remote_ip_proxy_scrubber.svg?branch=master)](https://travis-ci.org/metavida/remote_ip_proxy_scrubber)
 [![Code Climate](https://codeclimate.com/github/metavida/remote_ip_proxy_scrubber/badges/gpa.svg)](https://codeclimate.com/github/metavida/remote_ip_proxy_scrubber)
 [![Test Coverage](https://codeclimate.com/github/metavida/remote_ip_proxy_scrubber/badges/coverage.svg)](https://codeclimate.com/github/metavida/remote_ip_proxy_scrubber)
