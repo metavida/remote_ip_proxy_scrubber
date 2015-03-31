@@ -7,12 +7,12 @@ module RemoteIpProxyScrubber
 
       attr_reader :proxies
 
-      def initialize(app, *proxy_matches)
+      def initialize(app, *proxy_matchers)
         @app = app
 
         @proxies = []
 
-        proxy_matches.flatten.each do |matcher|
+        proxy_matchers.flatten.each do |matcher|
           @proxies << case matcher
           when Regexp, IPAddr
             matcher
