@@ -16,9 +16,19 @@ Because Rails has pretty dramatically changed how these sorts of IPs are filtere
 
 # Usage
 
-Let's say you've got proxy servers running outside of the local network where your Rails app is running. In this example, we'll say the IP addresses of these proxy servers are in these IP ranges: `17.0.0.4/30`, `17.17.0.8/30`
+Let's say you've got proxy servers running outside of the local network where your Rails/Rack app is running. In this example, we'll say the IP addresses of these proxy servers are in these IP ranges: `17.0.0.4/30`, `17.17.0.8/30`
 
-## Fixing `request.remote_ip`
+## Install the gem
+
+Add the following line to your application's Gemfile:
+
+```ruby
+gem 'remote_ip_proxy_scrubber'
+```
+
+Then run `bundle install` to install the gem.
+
+## Rails: Fixing `request.remote_ip`
 
 Without this gem, calls to `request.remote_ip` from your Rails app will return the IP addresses from your proxy servers. Adding the code, below, ensures that `request.remote_ip` will never return the IP addresses of your proxy servers, and assuming the servers that first process requests from your clients is adding an appropriate X-Forwarded-For header, `request.remote_ip` will return the real IP address of your clients!
 
@@ -31,7 +41,7 @@ config.middleware.insert_before(Rails::Rack::Logger, RemoteIpProxyScrubber.filte
 ])
 ```
 
-## Fixing Rails logs
+## Rails: Fixing logs
 
 **Oddly enough**, even with `request.remote_ip` returning the correct value, Rails log will *still* contain IP addresses from your proxy servers. To fix this, you'll need to tell Rails to use a different logger.
 
@@ -40,6 +50,17 @@ config.middleware.insert_before(Rails::Rack::Logger, RemoteIpProxyScrubber.filte
 
 config.middleware.insert_before(Rails::Rack::Logger, RemoteIpProxyScrubber.patched_logger)
 config.middleware.delete(Rails::Rack::Logger)
+```
+
+## Other Rack Apps: Fixing `request.ip`
+
+So long as you're using Rack, you can benefit from this gem! Just add the following near the top of your `config.ru` file:
+
+```ruby
+use RemoteIpProxyScrubber.filter_middleware, [
+  "17.0.0.4/30",
+  "17.17.0.8/30",
+]
 ```
 
 # Questions? Contributions?
